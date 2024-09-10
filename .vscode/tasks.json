@@ -1,0 +1,18 @@
+
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "run-app",
+        "type": "shell",
+        "command": "c3c",
+        "args": ["run"]
+      },
+      {
+        "label": "debug-app",
+        "type": "shell",
+        "command": "c3c",
+        "args": ["build"]
+      }
+    ]
+  }
