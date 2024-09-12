@@ -13,10 +13,10 @@ fault CollisionFault{
 
 fn CollisionSide! checkCircleOnRectCollision(float[<2>] ball_position, float ball_radius, float[<2>] rec_position, float[<2>] rec_dimension){
     Vector2 circle = Vector2{ball_position.x, ball_position.y};
-    Rectangle rec = Rectangle{ rec_position.x - rec_dimension.x / 2, rec_position.y - rec_dimension.y / 2, rec_dimension.x, rec_dimension.y};
+    Rectangle rec = Rectangle{rec_position.x - rec_dimension.x/2, rec_position.y - rec_dimension.y/2, rec_dimension.x, rec_dimension.y};
 
     // DEBUG COLL REC
-    //rl::drawRectangle((int)(rec.x), (int)(rec.y), (int)rec.width, (int)rec.height, {200, 25, 25, 100});
+    //rl::drawRectangle((int)(rec.x-2), (int)(rec.y-2), (int)rec.width+4, (int)rec.height+4, {200, 25, 25, 255});
 
     if (rl::checkCollisionCircleRec(circle, ball_radius, rec)){
         float[<2>] nearest_axis = {
