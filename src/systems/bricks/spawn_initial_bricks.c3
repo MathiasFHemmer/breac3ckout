@@ -7,8 +7,8 @@ import std::io;
 import collision;
 
 fn void spawn_initial_bricks(Pool(<Rigidbody>)* bricks_rigidbody_pool, Pool(<Brick>)* bricks_pool, Pool(<Shape>)* shape_pool_handler, float[<2>] brick_dimensions, usz[<2>] array_dimension){
-    float xSpacing = 8;
-	float ySpacing = 8;
+    float xSpacing = 0;
+	float ySpacing = 0;
 	float totalXSpaceing = ((array_dimension.x * (brick_dimensions.x + xSpacing)) - xSpacing) / 2 - (brick_dimensions.x/2);
 	float totalYSpaceing = ((array_dimension.y * (brick_dimensions.y + ySpacing)) - ySpacing) / 2 - (brick_dimensions.y/2);
 
@@ -23,9 +23,12 @@ fn void spawn_initial_bricks(Pool(<Rigidbody>)* bricks_rigidbody_pool, Pool(<Bri
         shape.dimensions = {
             brick_dimensions.x, brick_dimensions.y
         };
+        usz total = array_dimension.x*array_dimension.y;
 
+        float c = (float)index/(float)total * 200 + 55;
+        float lives = (float)index/(float)total * 10;
         bricks_pool.new({
-            1,
+            (char)lives, {(char)c,(char)c,(char)c,255},
             bricks_rigidbody_pool.new({
                 bricks_pool.get_next_id(), Brick.typeid,
                 float[<2>]{posX, posY},

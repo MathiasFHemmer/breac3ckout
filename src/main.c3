@@ -32,7 +32,7 @@ const CInt WINDOWS_WIDTH 	= 800;
 const float[<2>] 	BRICK_DIMENSION	= {64, 24};
 
 // Sounds
-Sound[2] sound_fx   				= {};
+Sound[4] sound_fx   				= {};
 int current_paddle_hit_fx 			= 0;
 Sound[10] paddle_hit_audio_channel 	= {};
 
@@ -58,17 +58,24 @@ fn void processInput(){
 	};
 
 	if(rl::isKeyDown(rl::KEY_W)){
+		if(!rl::isSoundPlaying(sound_fx[2])) rl::playSound(sound_fx[2]);
+		float vel_x = (float)rl::getTime() * 100 % 512 - 256;
 		puck_pool.new({
 			rigidbody_pool.new({
 				0, Puck.typeid,
 				float[<2>]{(float)(WINDOWS_WIDTH/2), (float)(WINDOWS_HEIGHT-50)},
-				{-256,-256},
+				{vel_x,-256},
 				0
 			}),
 			shape_pool.new({5})
 		});
 	}
 	
+	if(rl::isKeyReleased(rl::KEY_W)){
+		rl::stopSound(sound_fx[2]);
+		rl::playSound(sound_fx[3]);
+	}
+
 	if(rl::isKeyPressed(rl::KEY_SPACE)){
 		slow_time.start();
 	}
@@ -123,7 +130,7 @@ fn void updateUI(){
 			rl::drawRectanglePro(rect, 
 				{shape_pool.entity_pool[brick.shapebox_idx].dimensions.x/2,shape_pool.entity_pool[brick.shapebox_idx].dimensions.y/2}, 
 				0, 
-				components::BRICKS_COLOR[brick.lives-1]);
+				brick.color);
 		};
 		
 		//Particles
@@ -153,6 +160,8 @@ fn int main(String[] args) //@winmain
 	sound_fx = {
 		rl::loadSound("resources/pop.ogg"),
 		rl::loadSound("resources/paddle_hit.ogg"),
+		rl::loadSound("resources/minigun.ogg"),
+		rl::loadSound("resources/minigun_stop.ogg"),
 	};
 	for(int x = 0; x < paddle_hit_audio_channel.len; x++) paddle_hit_audio_channel[x] = rl::loadSoundAlias(sound_fx[0]);
 
@@ -189,7 +198,7 @@ fn int main(String[] args) //@winmain
 		shape_pool.new({5})
 	});
 
-	systems::bricks::spawn_initial_bricks(&brick_rigidbody_pool, &brick_pool, &shape_pool, {64, 24}, {8,6});
+	systems::bricks::spawn_initial_bricks(&brick_rigidbody_pool, &brick_pool, &shape_pool, {20, 10}, {32,24});
 
 	bool win = false;
 	while(!rl::windowShouldClose()){
@@ -203,6 +212,7 @@ fn int main(String[] args) //@winmain
 
 		systems::particles::update_emitter(&emitter_pool, &particle_pool);		
 		systems::particles::update_particle(&particle_pool, rl::getFrameTime());
+		systems::update_score(&score, rl::getFrameTime());
 		systems::update_slow_time(&slow_time, rl::getFrameTime());
 		//systems::tween::update_animate_rotation(anim_rotation_pool, rigidbody_pool, rl::getFrameTime());
 		//systems::tween::update_animate_position(pos_animation_pool, rigidbody_pool, rl::getFrameTime());

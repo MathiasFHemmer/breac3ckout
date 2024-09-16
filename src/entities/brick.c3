@@ -4,12 +4,7 @@ import raylib5::rl;
 
 struct Brick{
     char    lives;
+    Color   color;    
     usz     rigidbody_idx;
     usz     shapebox_idx;
 }
-
-const Color[] BRICKS_COLOR = {
-    rl::WHITE,
-    rl::GREEN,
-    rl::BLUE
-};

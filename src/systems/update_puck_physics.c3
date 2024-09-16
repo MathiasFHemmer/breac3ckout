@@ -32,15 +32,15 @@ fn void update_puck_physics(
         Puck puck = puck_pool_handler.entity_pool[puck_pool_handler.active_pool[i]];
         
         // Bricks    
-        bricks_to_delete.clear();
         for(usz j = 0; j < brick_pool_handler.active_pool.len(); j++){
             Brick* brick = &brick_pool_handler.entity_pool[brick_pool_handler.active_pool[j]];
-            if (try side = collision::checkCircleOnRectCollision(
+            if (try manifold = collision::checkCircleOnRectCollision(
                 rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position, 
                 shape_pool_handler.entity_pool[puck.shape_idx].radius, 
                 brick_rigidbody_pool_handler.entity_pool[brick.rigidbody_idx].position, 
                 shape_pool_handler.entity_pool[brick.shapebox_idx])){
-                switch(side){
+                (&rigidbody_pool_handler.entity_pool[puck.rigidbody_idx]).position += manifold.penetration;
+                switch(manifold.side){
                     case CollisionSide.BOTTOM:
                     case CollisionSide.TOP:
                         rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].velocity.y *= -1;
@@ -53,7 +53,7 @@ fn void update_puck_physics(
 				    true,
 				    brick_rigidbody_pool_handler.entity_pool[brick.rigidbody_idx].position,
 				    true,
-				    components::BRICKS_COLOR[brick.lives-1]
+				    brick.color
 			    });
                 
                 //rl::playSound(paddle_hit_audio_channel[current_paddle_hit_fx]);
@@ -67,7 +67,6 @@ fn void update_puck_physics(
                     //anim_rotation_pool[0].length = 1.0 / (float)combo_multiplier;
                     score.points += score.combo_bonus;
                     score.kill_count++;
-                    io::printfn("Col");
                     bricks_to_delete.push(brick_pool_handler.active_pool[j]);
                 }
             }
@@ -77,15 +76,17 @@ fn void update_puck_physics(
             shape_pool_handler.delete(brick_pool_handler.entity_pool[deleted_idx].shapebox_idx);
             brick_pool_handler.delete(deleted_idx);
         }
+        bricks_to_delete.clear();
         
         // Player
-        if(try side = collision::checkCircleOnRectCollision(
+        if(try manifold = collision::checkCircleOnRectCollision(
             rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position,
             shape_pool_handler.entity_pool[puck.shape_idx].radius, 
             rigidbody_pool_handler.entity_pool[player.rigidbody_idx].position, 
             shape_pool_handler.entity_pool[player.shape_idx])){
 			//TODO: Handle collision penetration
-			switch(side){
+            (&rigidbody_pool_handler.entity_pool[puck.rigidbody_idx]).position += manifold.penetration;
+			switch(manifold.side){
 				case CollisionSide.BOTTOM:
 				case CollisionSide.TOP:
 					rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].velocity.y *= -1;
@@ -96,14 +97,23 @@ fn void update_puck_physics(
 		}
 
         //Screen Limits
-        if(rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position.x + shape_pool_handler.entity_pool[puck.shape_idx].radius * 2 >= main::WINDOWS_WIDTH 
-            || rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position.x - shape_pool_handler.entity_pool[puck.shape_idx].radius * 2 <= 0){
+        // LEFT
+        if(rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position.x - shape_pool_handler.entity_pool[puck.shape_idx].radius <= 0){
+            rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position.x = shape_pool_handler.entity_pool[puck.shape_idx].radius;
+            rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].velocity.x *= -1;
+        }
+        // RIGHT
+        if(rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position.x + shape_pool_handler.entity_pool[puck.shape_idx].radius >= main::WINDOWS_WIDTH){
+            rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position.x = main::WINDOWS_WIDTH - shape_pool_handler.entity_pool[puck.shape_idx].radius;
 		    rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].velocity.x *= -1;
 		}
-        if(rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position.y - shape_pool_handler.entity_pool[puck.shape_idx].radius * 2 <= 0){
+
+        // UP
+        if(rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position.y - shape_pool_handler.entity_pool[puck.shape_idx].radius <= 0){
+            rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position.y = shape_pool_handler.entity_pool[puck.shape_idx].radius;
             rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].velocity.y *= -1;
         }
-        if(rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position.y + shape_pool_handler.entity_pool[puck.shape_idx].radius * 2 >= main::WINDOWS_HEIGHT){
+        if(rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position.y + shape_pool_handler.entity_pool[puck.shape_idx].radius >= main::WINDOWS_HEIGHT){ 
             pucks_to_delete.push(puck_pool_handler.active_pool[i]);
             score.combo = 1;
             score.combo_bonus = 1;
@@ -111,7 +121,7 @@ fn void update_puck_physics(
 
         (&rigidbody_pool_handler.entity_pool[puck.rigidbody_idx]).position +=  rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].velocity * (float[<2>])(slow_time.value * dt);
     };
-    
+
     foreach(deleted_idx : pucks_to_delete){
         rigidbody_pool_handler.delete(puck_pool_handler.entity_pool[deleted_idx].rigidbody_idx);
         shape_pool_handler.delete(puck_pool_handler.entity_pool[deleted_idx].shape_idx);

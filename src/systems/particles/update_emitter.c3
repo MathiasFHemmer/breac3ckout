@@ -15,7 +15,7 @@ fn void update_emitter(EmitterPool* entity_pool_handler, ParticlePool* particles
     for(int i = 0; i < entity_pool_handler.active_pool.len(); i++){
         Emitter current = entity_pool_handler.entity_pool[entity_pool_handler.active_pool[i]];
         if(current.trigger){
-            for(int x = 0; x < 20; x++){
+            for(int x = 0; x < 5; x++){
                 float r = 20 * (float)math::sqrt(random::next_float(&rand));
                 float theta = (float)random::next_float(&rand) * 2 * (float)math::PI;
                 particles.new({
