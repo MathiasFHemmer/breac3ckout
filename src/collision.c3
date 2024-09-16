@@ -2,6 +2,7 @@ module collision;
 
 import raylib5::rl;
 import std::math;
+import components::shapes;
 
 enum CollisionSide{
     TOP, BOTTOM, LEFT, RIGHT
@@ -11,11 +12,10 @@ fault CollisionFault{
     NOT_COLLIDED
 }
 
-fn CollisionSide! checkCircleOnRectCollision(float[<2>] ball_position, float ball_radius, float[<2>] rec_position, float[<2>] rec_dimension){
+fn CollisionSide! checkCircleOnRectCollision(float[<2>] ball_position, float ball_radius, float[<2>] rec_position, Shape rect_shape){
     Vector2 circle = Vector2{ball_position.x, ball_position.y};
-    Rectangle rec = Rectangle{rec_position.x - rec_dimension.x/2, rec_position.y - rec_dimension.y/2, rec_dimension.x, rec_dimension.y};
+    Rectangle rec = Rectangle{rec_position.x - rect_shape.dimensions.x/2, rec_position.y - rect_shape.dimensions.y/2, rect_shape.dimensions.x, rect_shape.dimensions.y};
 
-    // DEBUG COLL REC
     //rl::drawRectangle((int)(rec.x-2), (int)(rec.y-2), (int)rec.width+4, (int)rec.height+4, {200, 25, 25, 255});
 
     if (rl::checkCollisionCircleRec(circle, ball_radius, rec)){
