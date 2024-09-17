@@ -9,6 +9,7 @@ import std::io;
 import std::math;
 import allocator;
 import collision;
+import systems::sound;
 
 def IdList = List(<usz>) @private;
 
@@ -22,6 +23,7 @@ fn void update_puck_physics(
     Pool(<Emitter>)* emitter_pool_handler,
     Score* score,
     SlowTime slow_time,
+    SoundManager sound_manager,
     double dt){
     IdList bricks_to_delete;
     IdList pucks_to_delete;
@@ -33,6 +35,10 @@ fn void update_puck_physics(
         
         // Bricks    
         for(usz j = 0; j < brick_pool_handler.active_pool.len(); j++){
+            if(rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position.y > main::WINDOWS_HEIGHT/2){
+                //io::printfn("Skipping");
+                break;
+            }
             Brick* brick = &brick_pool_handler.entity_pool[brick_pool_handler.active_pool[j]];
             if (try manifold = collision::checkCircleOnRectCollision(
                 rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position, 
@@ -56,10 +62,7 @@ fn void update_puck_physics(
 				    brick.color
 			    });
                 
-                //rl::playSound(paddle_hit_audio_channel[current_paddle_hit_fx]);
-                //current_paddle_hit_fx++;
-                //current_paddle_hit_fx = current_paddle_hit_fx % paddle_hit_audio_channel.len;
-
+                sound_manager.play_sound_from_pool("pop");
                 brick.lives -= 1;
                 if(brick.lives == 0){
                     score.combo = std::math::clamp(++score.combo, 0, 5);

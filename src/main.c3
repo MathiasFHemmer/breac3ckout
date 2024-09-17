@@ -9,7 +9,7 @@ import systems::tween;
 import systems::particles;
 import entities;
 import allocator;
-
+import systems::sound;
 
 // Data
 Pool(<Rigidbody>) 			rigidbody_pool;
@@ -25,6 +25,7 @@ Pool(<components::Transform>)			transform_pool;
 SlowTime					slow_time;
 Player						player;
 Score						score;
+SoundManager				sound_manager;
 
 // Config
 const CInt WINDOWS_HEIGHT 	= 600;
@@ -40,7 +41,6 @@ fn void drawScore(){
 	ZString score_text = std::core::string::tformat_zstr("SCORE: %d", score.points);
 	Vector2 score_text_position = {transform_pool.entity_pool[score.transform_idx].position.x, transform_pool.entity_pool[score.transform_idx].position.y};
 	ZString combo_text = std::core::string::tformat_zstr("COMBO: %2.1f (+ %d)", score.combo, score.combo_bonus);
-	//rl::drawTextPro(rl::getFontDefault(), score_text, score_text_position, {(float)rl::measureText(score_text, 18)/2,0}, transform_pool.entity_pool[score.transform_idx].rotation, 18, 2, rl::WHITE);
 	rl::drawText(score_text, WINDOWS_WIDTH/2 - rl::measureText(score_text, 18)/2, WINDOWS_HEIGHT - 60, 18, rl::WHITE);
 	rl::drawText(combo_text, WINDOWS_WIDTH/2 - rl::measureText(combo_text, 18)/2, WINDOWS_HEIGHT - 40, 18, rl::WHITE);
 }
@@ -50,13 +50,11 @@ fn void processInput(){
 	Shape* shape = &shape_pool.entity_pool[player.shape_idx];
 
 	// Handle Paddle Movement
-	if(rl::isKeyDown(rl::KEY_LEFT) && rb.position.x - shape.dimensions.x/2  > 0){
-		rb.position -= rb.velocity * rl::getFrameTime();
+	switch{
+		case(rl::isKeyDown(rl::KEY_LEFT) && rb.position.x - shape.dimensions.x/2 > 0): rb.position -= rb.velocity * rl::getFrameTime();
+		case(rl::isKeyDown(rl::KEY_RIGHT) && rb.position.x + shape.dimensions.x/2 < WINDOWS_WIDTH): rb.position += rb.velocity * rl::getFrameTime();
 	};
-	if(rl::isKeyDown(rl::KEY_RIGHT) && rb.position.x + shape.dimensions.x/2 < WINDOWS_WIDTH){
-		rb.position += rb.velocity * rl::getFrameTime();
-	};
-
+	
 	if(rl::isKeyDown(rl::KEY_W)){
 		if(!rl::isSoundPlaying(sound_fx[2])) rl::playSound(sound_fx[2]);
 		float vel_x = (float)rl::getTime() * 100 % 512 - 256;
@@ -64,10 +62,10 @@ fn void processInput(){
 			rigidbody_pool.new({
 				0, Puck.typeid,
 				float[<2>]{(float)(WINDOWS_WIDTH/2), (float)(WINDOWS_HEIGHT-50)},
-				{vel_x,-256},
+				{vel_x,-512},
 				0
 			}),
-			shape_pool.new({5})
+			shape_pool.new({3})
 		});
 	}
 	
@@ -151,12 +149,14 @@ fn void updateUI(){
 
 fn int main(String[] args) //@winmain
 {
-	rl::setTargetFPS(120);
+	//rl::setTargetFPS(60);
 	rl::initWindow(WINDOWS_WIDTH, WINDOWS_HEIGHT, "Brick Breaker");
 	defer rl::closeWindow();
 	rl::initAudioDevice();
 	defer rl::closeAudioDevice();
 	
+	sound_manager.load_sound_pool("pop", "resources/pop.ogg", 30);
+
 	sound_fx = {
 		rl::loadSound("resources/pop.ogg"),
 		rl::loadSound("resources/paddle_hit.ogg"),
@@ -192,13 +192,13 @@ fn int main(String[] args) //@winmain
 		rigidbody_pool.new({
 			0, Puck.typeid,
 			float[<2>]{(float)(WINDOWS_WIDTH/2), (float)(WINDOWS_HEIGHT-150)},
-			{256,-256},
+			{256,-512},
 			0
 		}),
-		shape_pool.new({5})
+		shape_pool.new({3})
 	});
 
-	systems::bricks::spawn_initial_bricks(&brick_rigidbody_pool, &brick_pool, &shape_pool, {20, 10}, {32,24});
+	systems::bricks::spawn_initial_bricks(&brick_rigidbody_pool, &brick_pool, &shape_pool, {10, 5}, {64,48});
 
 	bool win = false;
 	while(!rl::windowShouldClose()){
@@ -219,7 +219,7 @@ fn int main(String[] args) //@winmain
 		
 		processInput();
 		
-		systems::update_puck_physics(&puck_pool, &brick_pool, &brick_rigidbody_pool, player, &rigidbody_pool, &shape_pool, &emitter_pool, &score, slow_time, rl::getFrameTime());
+		systems::update_puck_physics(&puck_pool, &brick_pool, &brick_rigidbody_pool, player, &rigidbody_pool, &shape_pool, &emitter_pool, &score, slow_time, sound_manager, rl::getFrameTime());
 		
 		updateUI();
 		

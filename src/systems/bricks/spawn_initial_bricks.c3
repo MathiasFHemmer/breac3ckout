@@ -26,7 +26,7 @@ fn void spawn_initial_bricks(Pool(<Rigidbody>)* bricks_rigidbody_pool, Pool(<Bri
         usz total = array_dimension.x*array_dimension.y;
 
         float c = (float)index/(float)total * 200 + 55;
-        float lives = (float)index/(float)total * 10;
+        float lives = 1;//(float)index/(float)total * 10;
         bricks_pool.new({
             (char)lives, {(char)c,(char)c,(char)c,255},
             bricks_rigidbody_pool.new({
