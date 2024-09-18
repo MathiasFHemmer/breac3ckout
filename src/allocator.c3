@@ -7,13 +7,21 @@ interface PoolHandler{
     fn void delete(usz index);
     fn usz! new(Type data);
     fn usz get_next_id();
+    fn void init(usz capacity);
 }
 
 struct Pool{
     List(<Type>) entity_pool;
     List(<usz>) active_pool;
-    List(<usz>) deleted_pool;
+    PriorityQueue(<usz>) deleted_pool;
     usz next_max_id;
+}
+
+fn void Pool.init(&self, usz capacity = 16){
+    io::printfn("Init pool with: %d", capacity);
+    self.entity_pool.new_init(capacity);
+    self.active_pool.new_init(capacity);
+    self.deleted_pool.new_init(capacity);
 }
 
 fn usz Pool.get_next_id(Pool *self){
@@ -26,7 +34,7 @@ fn usz Pool.new(Pool *self, Type data){
 
     usz index = 0;
     if(self.deleted_pool.len() > 0){
-        index = self.deleted_pool.pop_first()!!;
+        index = self.deleted_pool.pop()!!;
         //io::printfn(" Reusing index: %d", index);
     }else{
         self.entity_pool.reserve(1);   

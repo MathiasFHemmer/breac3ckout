@@ -24,6 +24,7 @@ fn void update_puck_physics(
     Score* score,
     SlowTime slow_time,
     SoundManager sound_manager,
+    LevelManager* level_manager,
     double dt){
     IdList bricks_to_delete;
     IdList pucks_to_delete;
@@ -67,9 +68,9 @@ fn void update_puck_physics(
                 if(brick.lives == 0){
                     score.combo = std::math::clamp(++score.combo, 0, 5);
                     score.combo_bonus = (int)std::math::pow(2, score.combo);
-                    //anim_rotation_pool[0].length = 1.0 / (float)combo_multiplier;
                     score.points += score.combo_bonus;
                     score.kill_count++;
+                    level_manager.level.current_bricks--;
                     bricks_to_delete.push(brick_pool_handler.active_pool[j]);
                 }
             }
