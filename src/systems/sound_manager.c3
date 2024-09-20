@@ -25,14 +25,12 @@ fn void SoundManager.load_sound_pool(SoundManager* self, String pool_name, Strin
         SoundPool* context = self.context_sound_pool.get_ref(pool_name)!!;
         context.sound_pool.push(sound);
         for(int i = 1; i <= amount; i++){
-            io::printfn("Amount: %d", amount);
             context.sound_pool.push(rl::loadSoundAlias(sound));
         }
     }else{
         SoundPool context;
         context.sound_pool.push(sound);
         for(int i = 1; i <= amount; i++){
-            io::printfn("Amount: %d", amount);
             context.sound_pool.push(rl::loadSoundAlias(sound)); 
         }
         self.context_sound_pool.set(pool_name, context);

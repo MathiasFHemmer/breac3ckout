@@ -7,4 +7,5 @@ struct Brick{
     Color   color;    
     usz     rigidbody_idx;
     usz     shapebox_idx;
+    usz     animate_shape_rect_idx;
 }

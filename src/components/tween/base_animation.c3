@@ -5,7 +5,8 @@ import std::math::easing;
 import std::io;
 
 enum TweenType{
-    SINEEASYINOUT
+    SINEEASYINOUT,
+    EASYOUTELASTIC
 }
 
 interface AnimationHandler{

@@ -10,9 +10,11 @@ import systems::particles;
 import entities;
 import allocator;
 import systems::sound;
+import commands::particles;
 
 // Data
 Context context;
+ParticleContext particle_context;
 
 // Config
 const CInt WINDOWS_HEIGHT 	= 600;
@@ -33,12 +35,12 @@ fn void processInput(){
 
 	// Handle Paddle Movement
 	switch{
-		case(rl::isKeyDown(rl::KEY_LEFT) && rb.position.x - shape.dimensions.x/2 > 0): rb.position -= rb.velocity * rl::getFrameTime();
-		case(rl::isKeyDown(rl::KEY_RIGHT) && rb.position.x + shape.dimensions.x/2 < WINDOWS_WIDTH): rb.position += rb.velocity * rl::getFrameTime();
+		case(rl::isKeyDown(rl::KEY_A) && rb.position.x - shape.dimensions.x/2 > 0): rb.position -= rb.velocity * rl::getFrameTime();
+		case(rl::isKeyDown(rl::KEY_D) && rb.position.x + shape.dimensions.x/2 < WINDOWS_WIDTH): rb.position += rb.velocity * rl::getFrameTime();
 	};
 	
 	if(rl::isKeyDown(rl::KEY_W)){
-		float vel_x = (float)rl::getTime() * 100 % 512 - 256;
+		float vel_x = (float)rl::getTime() * 1000 % 1024 - 512;
 		context.puck_pool.new({
 			context.rigidbody_pool.new({
 				0, Puck.typeid,
@@ -50,22 +52,18 @@ fn void processInput(){
 		});
 	}
 
+	if(rl::isKeyDown(rl::KEY_S)){
+		(&context.shape_pool.entity_pool[context.player.shape_idx]).dimensions = {512, 24};
+	}else{
+		(&context.shape_pool.entity_pool[context.player.shape_idx]).dimensions = {64, 24};
+	}
+
 	if(rl::isKeyPressed(rl::KEY_SPACE)){
 		context.slow_time.start();
 	}
 	if (rl::isKeyReleased(rl::KEY_SPACE)){
 		context.slow_time.stop();
 	};
-	
-	if(rl::isMouseButtonDown(MouseButton.LEFT)){
-				context.emitter_pool.new({
-				true,
-				float[<2>]{rl::getMouseX(), rl::getMouseY()},
-				true,
-				rl::RED
-			});
-	}
-	
 }
 
 fn void updateUI(){
@@ -103,14 +101,14 @@ fn void updateUI(){
 			};
 			rl::drawRectanglePro(rect, 
 				{context.shape_pool.entity_pool[brick.shapebox_idx].dimensions.x/2,context.shape_pool.entity_pool[brick.shapebox_idx].dimensions.y/2}, 
-				0, 
+				context.brick_rigidbody_pool.entity_pool[brick.rigidbody_idx].rotation, 
 				brick.color);
 		};
 		
 		//Particles
-		for(int i = 0; i < context.particle_pool.active_pool.len(); i++){
-			Particle particle = context.particle_pool.entity_pool[context.particle_pool.active_pool[i]];
-			rl::drawCircle((int)(particle.rigidbody.position.x + particle.spawn_position.x), (int)(particle.rigidbody.position.y + particle.spawn_position.y), particle.shape.radius, particle.color);
+		for(int i = 0; i < particle_context.particle_pool.active_pool.len(); i++){
+			Particle particle = particle_context.particle_pool.entity_pool[particle_context.particle_pool.active_pool[i]];
+			rl::drawCircle((int)(particle.rigidbody.position.x), (int)(particle.rigidbody.position.y), particle.shape.radius * particle.scale, particle.color);
 		};
 
 		// User Interface
@@ -130,27 +128,33 @@ fn int main(String[] args) //@winmain
 	rl::initAudioDevice();
 	defer rl::closeAudioDevice();
 
-
 	context.init();
+
+	context.level_manager.update_level();
+	context.level_manager.update_level();
+	context.level_manager.update_level();
+	context.level_manager.update_level();
+	systems::bricks::spawn_initial_bricks(&context.brick_rigidbody_pool, &context.brick_pool, &context.shape_pool, {32, 12}, {context.level_manager.level.rows, context.level_manager.level.columns}, &context.animate_shape_rect_pool);
 	
-
-
 	bool win = false;
 	while(!rl::windowShouldClose()){
 
 		if(context.level_manager.level.current_bricks <= 0 ){
+			io::printfn("Next level!");
 			context.level_manager.update_level();
-			systems::bricks::spawn_initial_bricks(&context.brick_rigidbody_pool, &context.brick_pool, &context.shape_pool, {32, 12}, {context.level_manager.level.rows, context.level_manager.level.columns});
+			systems::bricks::spawn_initial_bricks(&context.brick_rigidbody_pool, &context.brick_pool, &context.shape_pool, {32, 12}, {context.level_manager.level.rows, context.level_manager.level.columns}, &context.animate_shape_rect_pool);
 		}
 
-		systems::particles::update_emitter(&context.emitter_pool, &context.particle_pool);		
-		systems::particles::update_particle(&context.particle_pool, rl::getFrameTime());
+		systems::particles::emitter::update_emitter(&particle_context, rl::getFrameTime());		
+		systems::particles::update_particle(&particle_context, rl::getFrameTime());
 		systems::update_score(&context.score, rl::getFrameTime());
 		systems::update_slow_time(&context.slow_time, rl::getFrameTime());
+		systems::tween::update_animate_rotation(&context.animate_rotation_pool, &context.brick_rigidbody_pool, rl::getFrameTime());
+		systems::tween::update_animate_shape_rect(&context.animate_shape_rect_pool, &context.shape_pool, rl::getFrameTime());
 				
 		processInput();
 		
-		systems::update_puck_physics(&context.puck_pool, &context.brick_pool, &context.brick_rigidbody_pool, context.player, &context.rigidbody_pool, &context.shape_pool, &context.emitter_pool, &context.score, context.slow_time, context.sound_manager, &context.level_manager, rl::getFrameTime());
+		systems::update_puck_physics(&context.puck_pool, &context.brick_pool, &context.brick_rigidbody_pool, context.player, &context.rigidbody_pool, &context.shape_pool, &particle_context, &context.score, context.slow_time, context.sound_manager, &context.level_manager, &context.animate_shape_rect_pool, rl::getFrameTime());
 		
 		updateUI();
 		

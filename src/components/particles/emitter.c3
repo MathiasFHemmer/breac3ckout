@@ -1,10 +1,28 @@
 module components::particles;
 
 import raylib5;
+import std::collections;
+import commands::particles::defaults_spawners;
+
+def EmitterComponents = HashMap(<typeid, usz>);
+
+enum TriggerType : int(typeid key){
+    BURST = BurstTriggerData.typeid
+}
+
+struct BurstTriggerData{
+    int ammount;
+}
+
+union EmitterTriggerData{
+    BurstTriggerData burst;
+}
 
 struct Emitter{
-    bool is_alive;
     float[<2>] position;
-    bool trigger;
-    Color color;
+    double lifetime;
+    double max_lifetime;
+    EmitterComponents components;
+    TriggerType trigger_type;
+    EmitterTriggerData trigger_data;
 }

@@ -17,6 +17,8 @@ struct Context{
     Pool(<Brick>)				brick_pool;
     Pool(<Rigidbody>)			brick_rigidbody_pool;
     Pool(<components::Transform>)			transform_pool;
+    Pool(<AnimateRotation>)     animate_rotation_pool;
+	Pool(<AnimateShapeRect>)	animate_shape_rect_pool;
     SlowTime					slow_time;
     Player						player;
     Score						score;
@@ -69,5 +71,5 @@ fn void Context.setup_initial_entites(&self) @private{
 	};
 
 	self.level_manager.update_level();
-	systems::bricks::spawn_initial_bricks(&self.brick_rigidbody_pool, &self.brick_pool, &self.shape_pool, {32, 12}, {self.level_manager.level.rows, self.level_manager.level.columns});
+	systems::bricks::spawn_initial_bricks(&self.brick_rigidbody_pool, &self.brick_pool, &self.shape_pool, {32, 12}, {self.level_manager.level.rows, self.level_manager.level.columns}, &self.animate_shape_rect_pool);
 }
