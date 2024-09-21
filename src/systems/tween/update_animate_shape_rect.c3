@@ -5,8 +5,8 @@ import std::math;
 import components;
 import allocator;
 
-fn void update_animate_shape_rect(Pool(<AnimateShapeRect>)* pool, Pool(<Shape>)*  target, double dt){
-    for(usz i = 0; i < pool.active_pool.len(); i++){
+fn void update_animate_shape_rect(Pool(<AnimateShapeRect>)* pool, Pool(<Shape>)* target, double dt){
+    for(usz i = 0; i < pool.active_len; i++){
         AnimateShapeRect* anim = &pool.entity_pool[pool.active_pool[i]];
         if(!anim.animation.is_playing) continue;
 

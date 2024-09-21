@@ -43,7 +43,6 @@ fn void Context.setup_initial_entites(&self) @private{
 	shape.dimensions = {64, 24};
 	self.player = {
 		self.rigidbody_pool.new({
-			0, float.typeid,
 			float[<2>]{ (int)((double)main::WINDOWS_WIDTH * 0.5), (int)((double)main::WINDOWS_HEIGHT * 0.85)},
 			{800,0},
 			0
@@ -56,7 +55,6 @@ fn void Context.setup_initial_entites(&self) @private{
 	//Puck Setup
 	self.puck_pool.new({
 		self.rigidbody_pool.new({
-			0, Puck.typeid,
 			float[<2>]{(float)(main::WINDOWS_WIDTH/2), (float)(main::WINDOWS_HEIGHT-150)},
 			{256,-1024},
 			0

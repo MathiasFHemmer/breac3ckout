@@ -2,11 +2,6 @@ module components;
 
 import std::io;
 
-interface SlowTimeHandler{
-    fn void start();
-    fn void stop();
-}
-
 struct SlowTime{
     bool is_active;
     double duration_max;
@@ -19,11 +14,11 @@ struct SlowTime{
     double burnout_max;
 }
 
-fn void SlowTime.start(SlowTime* self) @dynamic{
+fn void SlowTime.start(SlowTime* self){
     self.is_active = true;
 }
 
-fn void SlowTime.stop(SlowTime* self) @dynamic{
+fn void SlowTime.stop(SlowTime* self){
     self.value = 1;
     self.is_active = false;
 }

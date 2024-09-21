@@ -11,7 +11,7 @@ import std::collections;
 
 fn void update_emitter(ParticleContext* context, double dt)
 {    
-    for(int i = 0; i < context.emiter_pool.active_pool.len(); i++){
+    for(int i = 0; i < context.emiter_pool.active_len; i++){
         Emitter* current = &context.emiter_pool.entity_pool[context.emiter_pool.active_pool[i]];
         current.lifetime += dt;
 

@@ -26,24 +26,20 @@ fn void spawn_initial_bricks(
 		float posX 	= (main::WINDOWS_WIDTH / 2 - totalXSpaceing + (column * (brick_dimensions.x + xSpacing)));
 		float posY 	= (main::WINDOWS_HEIGHT / 4 - totalYSpaceing + (line * (brick_dimensions.y + ySpacing)));
         
-        Shape shape;
-        shape.dimensions = {
-            brick_dimensions.x, brick_dimensions.y
-        };
         usz total = array_dimension.x*array_dimension.y;
 
-        float c = (float)index/(float)total * 200 + 55;
-        float lives = 1;//(float)index/(float)total * 10;
-        usz shape_id = shape_pool_handler.get_next_id();
+        float c = (float)index/(float)total * 155 + 100;
+        float lives = 2;//(float)index/(float)total * 10;
+
+        usz shape_id = shape_pool_handler.new({.dimensions = {brick_dimensions.x, brick_dimensions.y}});
         bricks_pool.new({
             (char)lives, {(char)c,(char)c,(char)c,255},
             bricks_rigidbody_pool.new({
-                bricks_pool.get_next_id(), Brick.typeid,
                 float[<2>]{posX, posY},
                 {0,0},
                 0
             }),
-            shape_pool_handler.new(shape),
+            shape_id,
             animation_pool.new({
                 {false, false, 1, 0, TweenType.EASYOUTELASTIC, 0},
 				shape_id, {brick_dimensions.x, brick_dimensions.y}, {brick_dimensions.x, brick_dimensions.y}

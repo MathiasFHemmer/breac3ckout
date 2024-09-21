@@ -11,8 +11,12 @@ import allocator;
 import collision;
 import systems::sound;
 import commands::particles;
+import componens::particles::properties;
 
 def IdList = List(<usz>) @private;
+
+IdList bricks_to_delete;
+IdList pucks_to_delete;
 
 fn void update_puck_physics(
     Pool(<Puck>)* puck_pool_handler, 
@@ -28,16 +32,12 @@ fn void update_puck_physics(
     LevelManager* level_manager,
     Pool(<AnimateShapeRect>)* animate_shape_rect_handler,
     double dt){
-    IdList bricks_to_delete;
-    IdList pucks_to_delete;
-    bricks_to_delete.new_init();
-    pucks_to_delete.new_init();
 
-    for(usz i = 0; i < puck_pool_handler.active_pool.len(); i++){
+    for(usz i = 0; i < puck_pool_handler.active_len; i++){
         Puck puck = puck_pool_handler.entity_pool[puck_pool_handler.active_pool[i]];
         
         // Bricks    
-        for(usz j = 0; j < brick_pool_handler.active_pool.len(); j++){
+        for(usz j = 0; j < brick_pool_handler.active_len; j++){
             if(rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position.y > main::WINDOWS_HEIGHT*0.75){
                 //io::printfn("Skipping");
                 break;
@@ -58,8 +58,6 @@ fn void update_puck_physics(
                         rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].velocity.x *=-1;
                 }
                 
-                commands::particles::spawn_brick_break_emitter(particle_context, rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position);
-
                 (&animate_shape_rect_handler.entity_pool[brick.animate_shape_rect_idx]).initial_value = animate_shape_rect_handler.entity_pool[brick.animate_shape_rect_idx].target_value;
                 (&animate_shape_rect_handler.entity_pool[brick.animate_shape_rect_idx]).target_value *= 0.5;
                 (&animate_shape_rect_handler.entity_pool[brick.animate_shape_rect_idx]).is_playing = true;
@@ -72,20 +70,14 @@ fn void update_puck_physics(
                     score.points += score.combo_bonus;
                     score.kill_count++;
                     level_manager.level.current_bricks--;
-                    io::printfn("Deleted brick, %d remaining", level_manager.level.current_bricks);
+                    commands::particles::spawn_brick_break_emitter(particle_context, rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position, ParticleAmountType.RANDOM_RANGE, {.range = {5,10}});
                     bricks_to_delete.push(brick_pool_handler.active_pool[j]);
+                }else{
+                    commands::particles::spawn_brick_break_emitter(particle_context, rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position, ParticleAmountType.FIXED, {.fixed = 2});
                 }
             }
 	    }
-        foreach(deleted_idx: bricks_to_delete){
-            animate_shape_rect_handler.delete(brick_pool_handler.entity_pool[deleted_idx].animate_shape_rect_idx);
-            brick_rigidbody_pool_handler.delete(brick_pool_handler.entity_pool[deleted_idx].rigidbody_idx);
-            shape_pool_handler.delete(brick_pool_handler.entity_pool[deleted_idx].shapebox_idx);
-            brick_pool_handler.delete(deleted_idx);
 
-        }
-        bricks_to_delete.clear();
-        
         // Player
         if(try manifold = collision::checkCircleOnRectCollision(
             rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position,
@@ -122,6 +114,7 @@ fn void update_puck_physics(
             rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].velocity.y *= -1;
         }
         if(rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].position.y + shape_pool_handler.entity_pool[puck.shape_idx].radius >= main::WINDOWS_HEIGHT){ 
+            //rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].velocity.y *= -1;
             pucks_to_delete.push(puck_pool_handler.active_pool[i]);
             score.combo = 1;
             score.combo_bonus = 1;
@@ -130,10 +123,18 @@ fn void update_puck_physics(
         (&rigidbody_pool_handler.entity_pool[puck.rigidbody_idx]).position +=  rigidbody_pool_handler.entity_pool[puck.rigidbody_idx].velocity * (float[<2>])(slow_time.value * dt);
     };
 
-    foreach(deleted_idx : pucks_to_delete){
-        rigidbody_pool_handler.delete(puck_pool_handler.entity_pool[deleted_idx].rigidbody_idx);
-        shape_pool_handler.delete(puck_pool_handler.entity_pool[deleted_idx].shape_idx);
-        puck_pool_handler.delete(deleted_idx);
+    foreach(dto: bricks_to_delete){
+        animate_shape_rect_handler.delete(animate_shape_rect_handler.active_pool_map[brick_pool_handler.entity_pool[dto].animate_shape_rect_idx]);
+        brick_rigidbody_pool_handler.delete(brick_rigidbody_pool_handler.active_pool_map[brick_pool_handler.entity_pool[dto].rigidbody_idx]);
+        shape_pool_handler.delete(shape_pool_handler.active_pool_map[brick_pool_handler.entity_pool[dto].shapebox_idx]);
+        brick_pool_handler.delete(brick_pool_handler.active_pool_map[dto]);
+    }
+    bricks_to_delete.clear();
+
+    foreach(dto : pucks_to_delete){
+        rigidbody_pool_handler.delete(rigidbody_pool_handler.active_pool_map[puck_pool_handler.entity_pool[dto].rigidbody_idx]);
+        shape_pool_handler.delete(shape_pool_handler.active_pool_map[puck_pool_handler.entity_pool[dto].shape_idx]);
+        puck_pool_handler.delete(puck_pool_handler.active_pool_map[dto]);
     }
     pucks_to_delete.clear();
 }

@@ -10,7 +10,7 @@ fn void update_trigger_over_lifetime(ParticleContext* context, Emitter* e, usz i
 
     t.current += dt;
     if(t.current >= t.interval){
-        commands::particles::defaults_spawners::emitter_trigger_lut[e.trigger_type.key](context, e)!!;
+        commands::particles::defaults_spawners::spawn_particle(context, e);
         t.current = 0;
     }
 }

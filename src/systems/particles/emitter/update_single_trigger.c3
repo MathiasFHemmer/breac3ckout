@@ -9,7 +9,7 @@ fn void update_single_trigger(ParticleContext* context, Emitter* e, usz id, doub
     EmitterSingleTrigger* t = &context.single_trigger_pool.entity_pool[id];
 
     if(t.trigger == true){
-        commands::particles::defaults_spawners::emitter_trigger_lut[e.trigger_type.key](context, e)!!;
+        commands::particles::defaults_spawners::spawn_particle(context, e);
         t.trigger = false;      
         //to_delete.push(entity_pool_handler.active_pool[i]);
     }

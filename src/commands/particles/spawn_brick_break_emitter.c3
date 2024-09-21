@@ -4,18 +4,16 @@ import raylib5;
 import entities::core;
 import components::particles;
 import std::io;
+import componens::particles::properties;
 
-fn void spawn_brick_break_emitter(ParticleContext* context, float[<2>] position){
+fn void spawn_brick_break_emitter(ParticleContext* context, float[<2>] position, ParticleAmountType type, EmiterAmountData amount){
     EmitterComponents components = *EmitterComponents{}.new_init_with_key_values(
-        EmitterTriggerOverLifetime.typeid, context.emitter_trigger_over_lifetime.new ({0.2, 0})
+        EmitterSingleTrigger.typeid, context.single_trigger_pool.new ({true})
     );
-
-    EmitterTriggerData emd;
-    emd.burst.ammount = 10;
 
     context.emiter_pool.new({
         position,
         0,1,components,
-        TriggerType.BURST, emd
+        type, amount
     });
 }
