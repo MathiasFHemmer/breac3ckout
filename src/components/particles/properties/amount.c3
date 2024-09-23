@@ -15,12 +15,12 @@ enum ParticleAmountType : (GetParticleAmountHandler handler){
 
 
 fn int get_fixed(Emitter* e) @inline{
-    return e.amount.fixed;
+    return e.amount_data.fixed;
 }
 
 fn int get_range(Emitter* e) @inline{
     DefaultRandom rand;
     random::seed_entropy(&rand);
     float f = random::next_float(&rand);
-    return (int)(e.amount.range.x + (float)(e.amount.range.y-e.amount.range.x)*f);
+    return (int)(e.amount_data.range.x + (float)(e.amount_data.range.y-e.amount_data.range.x)*f);
 }

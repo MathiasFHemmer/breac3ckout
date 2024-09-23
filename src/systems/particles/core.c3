@@ -26,7 +26,8 @@ fn void setup() @init{
     to_delete = *IdList{}.new_init(500);
 
     particle_lut = *ParticleComponentLUT{}.new_init_with_key_values(
-        ParticleScaleOverLifetime.typeid, &systems::particles::behaviour::update_scale_over_lifetime
+        ParticleScaleOverLifetime.typeid, &systems::particles::behaviour::update_scale_over_lifetime,
+        ParticleColorOverLifetime.typeid, &systems::particles::behaviour::update_color_over_lifetime
     );
 
     emitter_lut = *EmitterComponentLUT{}.new_init_with_key_values(

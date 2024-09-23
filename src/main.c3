@@ -18,8 +18,8 @@ Context context;
 ParticleContext particle_context;
 
 // Config
-const CInt WINDOWS_HEIGHT 	= 960;
-const CInt WINDOWS_WIDTH 	= 1280;
+const CInt WINDOWS_HEIGHT 	= 800;
+const CInt WINDOWS_WIDTH 	= 600;
 const float[<2>] 	BRICK_DIMENSION	= {64, 24};
 
 fn void drawScore(){
@@ -121,7 +121,7 @@ fn void updateUI(){
 	rl::endDrawing();
 }
 
-fn int main(String[] args) @winmain
+fn int main(String[] args) //@winmain
 {
 	rl::initWindow(WINDOWS_WIDTH, WINDOWS_HEIGHT, string::tformat("Brick Breaker - %s v.%s", version::BUILD_TIMESTAMP, version::BUILD_VERSION));
 	defer rl::closeWindow();
@@ -141,15 +141,9 @@ fn int main(String[] args) @winmain
 	while(!rl::windowShouldClose()){
 
 		if(context.level_manager.level.current_bricks <= 0 ){
-			io::printfn("Next level!");
 			context.level_manager.update_level();
 			systems::bricks::spawn_initial_bricks(&context.brick_rigidbody_pool, &context.brick_pool, &context.shape_pool, {32, 12}, {context.level_manager.level.rows, context.level_manager.level.columns}, &context.animate_shape_rect_pool);
 		}
-
-		//io::printn(context.brick_rigidbody_pool.active_len);
-		// for(usz x = 0; x < context.rigidbody_pool.active_len; x++){
-
-		// }
 
 		systems::particles::emitter::update_emitter(&particle_context, rl::getFrameTime());		
 		systems::particles::update_particle(&particle_context, rl::getFrameTime());

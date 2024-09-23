@@ -12,6 +12,13 @@ union EmiterAmountData{
      int[<2>] range;
 }
 
+union EmiterPositionData{
+     float[<2>] fixed;
+     struct random_inside_circle{
+        float radius;  
+     }
+}
+
 struct Emitter{
     float[<2>] position;
     double lifetime;
@@ -19,6 +26,7 @@ struct Emitter{
     EmitterComponents components;
     
     ParticleAmountType amount_type;
-    EmiterAmountData amount;
-    // EmitterTriggerData trigger_data;
+    EmiterAmountData amount_data;
+    ParticlePositionType position_type;
+    EmiterPositionData position_data;
 }

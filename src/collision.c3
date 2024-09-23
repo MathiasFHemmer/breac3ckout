@@ -9,6 +9,7 @@ import components::shapes;
 struct CollisionManifold{
     CollisionSide side;
     float[<2>] penetration;
+    float[<2>] position;
 }
 
 enum CollisionSide{
@@ -47,13 +48,13 @@ fn CollisionManifold! checkCircleOnRectCollision(float[<2>] ball_position, float
         }
         switch{
             case(left   < ball_radius && left < top && left < bottom):
-                return {CollisionSide.LEFT, penetration};
+                return {CollisionSide.LEFT, penetration, nearest_axis};
             case(right  < ball_radius && right < top && right < bottom):
-                return {CollisionSide.RIGHT, penetration};
+                return {CollisionSide.RIGHT, penetration, nearest_axis};
             case(top    < ball_radius):
-                return {CollisionSide.TOP, penetration};
+                return {CollisionSide.TOP, penetration, nearest_axis};
             case(bottom < ball_radius):
-                return {CollisionSide.BOTTOM, penetration};
+                return {CollisionSide.BOTTOM, penetration, nearest_axis};
             default:
                 return CollisionFault.NOT_COLLIDED?;
         }        

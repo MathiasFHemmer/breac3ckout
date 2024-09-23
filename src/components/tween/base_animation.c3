@@ -4,11 +4,6 @@ import systems::tween;
 import std::math::easing;
 import std::io;
 
-enum TweenType{
-    SINEEASYINOUT,
-    EASYOUTELASTIC
-}
-
 struct Animation{
     bool is_playing;
     bool loop;
@@ -21,13 +16,13 @@ struct Animation{
 fn float Animation.step(Animation* self, double dt){
     self.current_time += (float)dt;
     float ratio = self.current_time/self.length; //Y = (X-A)/(B-A) * (D-C) + C
-    self.current_value = tween::evaluate(self.curve, ratio);
+    self.current_value = self.curve.handler(ratio);
     
     if(self.current_time >= self.length){
         if(self.loop == false){
             self.is_playing = false;
         } else{
-          self.current_time = -self.current_time;   
+          self.current_time = 0;   
         } 
     } 
     return self.current_value;

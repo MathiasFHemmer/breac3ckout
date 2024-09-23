@@ -15,7 +15,6 @@ struct Pool{
 }
 
 fn void Pool.init(&self, usz capacity = 16){
-    io::printfn("Init pool with: %d", capacity);
     self.entity_pool.new_init(capacity);
     self.active_pool.new_init(capacity);
     self.deleted_pool.new_init(capacity);

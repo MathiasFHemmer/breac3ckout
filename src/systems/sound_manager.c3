@@ -19,7 +19,6 @@ fn void SoundManager.load_sound(SoundManager* self, String name, String filename
 }
 
 fn void SoundManager.load_sound_pool(SoundManager* self, String pool_name, String file_name, int amount){
-    io::printfn("Pool name: %s, file name: %s, amount: %d", pool_name, file_name, amount);
     Sound sound = rl::loadSound((ZString)file_name);
     if(self.context_sound_pool.has_key(pool_name)){
         SoundPool* context = self.context_sound_pool.get_ref(pool_name)!!;

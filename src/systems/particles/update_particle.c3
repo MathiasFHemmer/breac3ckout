@@ -28,7 +28,9 @@ fn void update_particle(ParticleContext* context,  double dt)
         {
             switch{
                 case(type == ParticleScaleOverLifetime.typeid):
-                    context.scale_over_lifetime_pool.delete(id);
+                    context.particle_scale_over_lifetime_pool.delete(id);
+                case(type == ParticleColorOverLifetime.typeid):
+                    context.particle_color_over_lifetime_pool.delete(id);
             }
         };
         context.particle_pool.delete(to_delete[i]);

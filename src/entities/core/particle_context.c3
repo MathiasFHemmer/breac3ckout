@@ -10,5 +10,6 @@ struct ParticleContext{
     Pool(<EmitterTriggerOverLifetime>) emitter_trigger_over_lifetime;
 
     Pool(<Particle>)  particle_pool;
-    Pool(<ParticleScaleOverLifetime>) scale_over_lifetime_pool;
+    Pool(<ParticleScaleOverLifetime>) particle_scale_over_lifetime_pool;
+    Pool(<ParticleColorOverLifetime>) particle_color_over_lifetime_pool;
 }

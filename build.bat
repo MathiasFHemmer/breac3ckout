@@ -14,4 +14,10 @@ echo module version; > ./src/version.c3
 echo const String BUILD_VERSION = "%GIT_HASH%"; >> ./src/version.c3
 echo const String BUILD_TIMESTAMP = "%BUILD_TIME%"; >> ./src/version.c3
 
-c3c run --strip-unused=no
+c3c build --strip-unused=no
+
+set current_date=%date:~0,2%%date:~3,2%%date:~6,4%
+set current_time=%time:~0,2%-%time:~3,2%
+set zip_filename=output_%current_date%_%current_time%.zip
+
+powershell -Command "Compress-Archive -Force -Path ./build/pong.exe,./resources/* -DestinationPath '%zip_filename%'"
