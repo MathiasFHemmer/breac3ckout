@@ -1,3 +1,4 @@
+import version;
 import std::io;
 import std::math;
 import raylib5::rl;
@@ -120,9 +121,9 @@ fn void updateUI(){
 	rl::endDrawing();
 }
 
-fn int main(String[] args) //@winmain
+fn int main(String[] args) @winmain
 {
-	rl::initWindow(WINDOWS_WIDTH, WINDOWS_HEIGHT, "Brick Breaker");
+	rl::initWindow(WINDOWS_WIDTH, WINDOWS_HEIGHT, string::tformat("Brick Breaker - %s v.%s", version::BUILD_TIMESTAMP, version::BUILD_VERSION));
 	defer rl::closeWindow();
 	rl::initAudioDevice();
 	defer rl::closeAudioDevice();
