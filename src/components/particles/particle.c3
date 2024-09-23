@@ -17,15 +17,3 @@ struct Particle{
     float scale;
     ParticleComponents components;
 }
-
-fn Particle* Particle.add_scale_over_lifetime(&self, ParticleContext* context){
-    self.components.set(
-        ParticleScaleOverLifetime.typeid,
-        context.particle_scale_over_lifetime_pool.new({
-            1, 0
-        })
-    );
-
-    return self;
-}
-

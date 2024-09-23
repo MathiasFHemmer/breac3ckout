@@ -7,7 +7,8 @@ import components::particles;
 struct ParticleContext{
     Pool(<Emitter>)   emiter_pool;
     Pool(<EmitterSingleTrigger>) single_trigger_pool;
-    Pool(<EmitterTriggerOverLifetime>) emitter_trigger_over_lifetime;
+    Pool(<EmitterTriggerAfterInterval>) emitter_trigger_after_interval_pool;
+    Pool(<EmitterTriggerOverTime>) emitter_trigger_over_time_pool;
 
     Pool(<Particle>)  particle_pool;
     Pool(<ParticleScaleOverLifetime>) particle_scale_over_lifetime_pool;

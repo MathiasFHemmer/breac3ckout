@@ -1,6 +1,6 @@
 module components::particles::emitter;
 
-struct EmitterTriggerOverLifetime{
+struct EmitterTriggerAfterInterval{
     double interval;
     double current;
 }

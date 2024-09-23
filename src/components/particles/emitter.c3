@@ -20,6 +20,7 @@ union EmiterPositionData{
 }
 
 struct Emitter{
+    bool active;
     float[<2>] position;
     double lifetime;
     double max_lifetime;

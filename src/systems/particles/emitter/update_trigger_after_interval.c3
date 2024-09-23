@@ -5,8 +5,8 @@ import entities::core;
 import commands::particles::defaults_spawners;
 
 
-fn void update_trigger_over_lifetime(ParticleContext* context, Emitter* e, usz id, double dt){
-    EmitterTriggerOverLifetime* t = &context.emitter_trigger_over_lifetime.entity_pool[id];
+fn void update_trigger_after_interval(ParticleContext* context, Emitter* e, usz id, double dt){
+    EmitterTriggerAfterInterval* t = &context.emitter_trigger_after_interval_pool.entity_pool[id];
 
     t.current += dt;
     if(t.current >= t.interval){

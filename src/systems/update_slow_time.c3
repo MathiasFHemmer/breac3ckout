@@ -1,10 +1,13 @@
 module systems;
 
+import entities;
 import components;
 import std::math;
 import std::io;
  
-fn void update_slow_time(SlowTime* entity, double dt){
+fn void update_slow_time(SlowTime* entity, Context* ctx, ParticleContext* particle_ctx, double dt){
+    (&particle_ctx.emiter_pool.entity_pool[entity.emitter_idx]).position = ctx.rigidbody_pool.entity_pool[ctx.player.rigidbody_idx].position + {0, -50};
+
     if(entity.is_burnout){
         entity.burnout_current -= dt;
         entity.duration_current -= dt;

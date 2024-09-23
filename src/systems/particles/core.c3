@@ -32,6 +32,7 @@ fn void setup() @init{
 
     emitter_lut = *EmitterComponentLUT{}.new_init_with_key_values(
         EmitterSingleTrigger.typeid, &systems::particles::emitter::behaviour::update_single_trigger,
-        EmitterTriggerOverLifetime.typeid, &systems::particles::emitter::behaviour::update_trigger_over_lifetime
+        EmitterTriggerAfterInterval.typeid, &systems::particles::emitter::behaviour::update_trigger_after_interval,
+        EmitterTriggerOverTime.typeid, &systems::particles::emitter::behaviour::update_trigger_over_time
     );
 }

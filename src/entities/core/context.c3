@@ -26,7 +26,7 @@ struct Context{
     LevelManager				level_manager;
 }
 
-fn void Context.init(&self){
+fn void Context.init(&self, ParticleContext* pc){
     self.emitter_pool.init(300);
 	self.particle_pool.init(10000);
 	self.puck_pool.init(500);
@@ -35,6 +35,7 @@ fn void Context.init(&self){
 
     self.sound_manager.load_sound_pool("pop", "resources/pop.ogg", 30);
     self.setup_initial_entites();
+	self.slow_time.init(pc);
 }
 
 fn void Context.setup_initial_entites(&self) @private{
@@ -50,7 +51,7 @@ fn void Context.setup_initial_entites(&self) @private{
 		self.shape_pool.new(shape)
 	};
 
-	self.slow_time = SlowTime{false, 4.0, 0.0, 0.35, 1.0, false, 0.0, 2.0};
+	self.slow_time = SlowTime{false, 4.0, 0.0, 0.35, 1.0, false, 0.0, 2.0, 0};
 	
 	//Puck Setup
 	self.puck_pool.new({

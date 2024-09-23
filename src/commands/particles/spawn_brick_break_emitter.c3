@@ -12,6 +12,7 @@ fn void spawn_brick_break_emitter(ParticleContext* context, float[<2>] position,
     );
 
     context.emiter_pool.new({
+        true,
         position,
         0,1,components,
         type, amount, position_type, position_data

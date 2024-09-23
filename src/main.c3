@@ -18,8 +18,8 @@ Context context;
 ParticleContext particle_context;
 
 // Config
-const CInt WINDOWS_HEIGHT 	= 800;
-const CInt WINDOWS_WIDTH 	= 600;
+const CInt WINDOWS_HEIGHT 	= 920;
+const CInt WINDOWS_WIDTH 	= 1280;
 const float[<2>] 	BRICK_DIMENSION	= {64, 24};
 
 fn void drawScore(){
@@ -59,9 +59,11 @@ fn void processInput(){
 	}
 
 	if(rl::isKeyPressed(rl::KEY_SPACE)){
+		particle_context.emiter_pool.entity_pool[context.slow_time.emitter_idx].active = true;
 		context.slow_time.start();
 	}
 	if (rl::isKeyReleased(rl::KEY_SPACE)){
+		particle_context.emiter_pool.entity_pool[context.slow_time.emitter_idx].active = false;
 		context.slow_time.stop();
 	};
 }
@@ -123,12 +125,14 @@ fn void updateUI(){
 
 fn int main(String[] args) //@winmain
 {
+
+
 	rl::initWindow(WINDOWS_WIDTH, WINDOWS_HEIGHT, string::tformat("Brick Breaker - %s v.%s", version::BUILD_TIMESTAMP, version::BUILD_VERSION));
 	defer rl::closeWindow();
 	rl::initAudioDevice();
 	defer rl::closeAudioDevice();
 
-	context.init();
+	context.init(&particle_context);
 	context.level_manager.update_level();
 	context.level_manager.update_level();
 	context.level_manager.update_level();
@@ -139,7 +143,6 @@ fn int main(String[] args) //@winmain
 	
 	bool win = false;
 	while(!rl::windowShouldClose()){
-
 		if(context.level_manager.level.current_bricks <= 0 ){
 			context.level_manager.update_level();
 			systems::bricks::spawn_initial_bricks(&context.brick_rigidbody_pool, &context.brick_pool, &context.shape_pool, {32, 12}, {context.level_manager.level.rows, context.level_manager.level.columns}, &context.animate_shape_rect_pool);
@@ -148,7 +151,7 @@ fn int main(String[] args) //@winmain
 		systems::particles::emitter::update_emitter(&particle_context, rl::getFrameTime());		
 		systems::particles::update_particle(&particle_context, rl::getFrameTime());
 		systems::update_score(&context.score, rl::getFrameTime());
-		systems::update_slow_time(&context.slow_time, rl::getFrameTime());
+		systems::update_slow_time(&context.slow_time, &context, &particle_context,  rl::getFrameTime());
 		systems::tween::update_animate_rotation(&context.animate_rotation_pool, &context.brick_rigidbody_pool, rl::getFrameTime());
 		systems::tween::update_animate_shape_rect(&context.animate_shape_rect_pool, &context.shape_pool, rl::getFrameTime());
 				

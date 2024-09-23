@@ -14,13 +14,14 @@ fn void update_emitter(ParticleContext* context, double dt)
     for(int i = 0; i < context.emiter_pool.active_len; i++){
         Emitter* current = &context.emiter_pool.entity_pool[context.emiter_pool.active_pool[i]];
         current.lifetime += dt;
+        if(current.active == false) continue;
 
         current.components.@each(;typeid type, usz id)
         {
             systems::particles::emitter_lut[type](context, current, id, dt)!!;
         };
 
-        if(current.lifetime >= current.max_lifetime) systems::particles::to_delete.push(context.emiter_pool.active_pool[i]);
+        if(current.lifetime >= current.max_lifetime && current.max_lifetime > 0) systems::particles::to_delete.push(context.emiter_pool.active_pool[i]);
     }
 
     for(int i = 0; i < systems::particles::to_delete.len(); i++){
