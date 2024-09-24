@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Program",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/pong.exe",  // Path to the compiled executable
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build",  // Calls the task from tasks.json
+        }
+    ]
+}
