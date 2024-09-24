@@ -69,10 +69,10 @@ fn void update_puck_physics(
                     score.points += score.combo_bonus;
                     score.kill_count++;
                     level_manager.level.current_bricks--;
-                    commands::particles::spawn_brick_break_emitter(particle_context, manifold.position, ParticleAmountType.RANDOM_RANGE, {.range = {5,10}}, ParticlePositionType.RANDOM_INSIDE_CIRCLE, {.random_inside_circle = {10}});
+                    commands::particles::spawn_brick_break_emitter(particle_context, manifold.position, ParticleAmountType.RANDOM_RANGE, {.range = {5,10}}, ParticlePositionType.RANDOM_INSIDE_CIRCLE, {.random_inside_circle = 10});
                     bricks_to_delete.push(brick_pool_handler.active_pool[j]);
                 }else{
-                    commands::particles::spawn_brick_break_emitter(particle_context, manifold.position, ParticleAmountType.FIXED, {.fixed = 2}, ParticlePositionType.RANDOM_INSIDE_CIRCLE, {.random_inside_circle = {10}});
+                    commands::particles::spawn_brick_break_emitter(particle_context, manifold.position, ParticleAmountType.FIXED, {.fixed = 2}, ParticlePositionType.RANDOM_INSIDE_CIRCLE, {.random_inside_circle = 10});
                 }
             }
 	    }

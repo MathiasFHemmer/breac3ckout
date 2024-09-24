@@ -10,7 +10,7 @@ fn void update_trigger_over_time(ParticleContext* context, Emitter* e, usz id, d
     EmitterTriggerOverTime* t = &context.emitter_trigger_over_time_pool.entity_pool[id];
 
     t.current_time += dt;
-    if(t.current_time >= t.interval){
+    if(t.current_time >= t.interval / t.amount){
         commands::particles::defaults_spawners::spawn_particle(context, e);
         t.current_time = 0;
     }

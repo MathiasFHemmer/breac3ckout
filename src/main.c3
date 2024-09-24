@@ -132,14 +132,7 @@ fn int main(String[] args) //@winmain
 	rl::initAudioDevice();
 	defer rl::closeAudioDevice();
 
-	context.init(&particle_context);
-	context.level_manager.update_level();
-	context.level_manager.update_level();
-	context.level_manager.update_level();
-	context.level_manager.update_level();
-	context.level_manager.update_level();
-	context.level_manager.update_level();
-	systems::bricks::spawn_initial_bricks(&context.brick_rigidbody_pool, &context.brick_pool, &context.shape_pool, {32, 12}, {context.level_manager.level.rows, context.level_manager.level.columns}, &context.animate_shape_rect_pool);
+	context.init(&particle_context);	
 	
 	bool win = false;
 	while(!rl::windowShouldClose()){

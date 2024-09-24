@@ -3,7 +3,7 @@
     "configurations": [
         {
             "name": "Run Program",
-            "type": "lldb",
+            "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/pong.exe",  // Path to the compiled executable
             "args": [],

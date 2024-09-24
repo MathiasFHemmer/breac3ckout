@@ -6,6 +6,7 @@ import std::io;
 def TweenHandler = fn float(double t);
 
 enum TweenType : (TweenHandler handler){
+    LINEAR =        &linear,
     SINEEASYINOUT = &sine_easy_in_out,
     EASYOUTELASTIC = &easy_out_elastic
 }
@@ -16,4 +17,8 @@ fn float sine_easy_in_out(double t){
 
 fn float easy_out_elastic(double t){
     return (float)(t == 0 ? 0 : t == 1 ? 1 : std::math::pow(2, -10 * t) * math::sin((t * 10 - 0.75) * ((2 * std::math::PI) / 3)) + 1);
+}
+
+fn float linear(double t){
+    return (float)t;
 }

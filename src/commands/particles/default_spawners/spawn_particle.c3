@@ -19,26 +19,15 @@ fn void spawn_particle(ParticleContext* context, Emitter* e)
 
     for(int x = 0; x < amount; x++){
         float[<2>] position = e.position_type.handler(e);
-
-        float r = 20 * (float)math::sqrt(random::next_float(&rand));
-        float theta = (float)random::next_float(&rand) * 2 * (float)math::PI;
-        ParticleComponents components;
-        components.set(ParticleScaleOverLifetime.typeid,
-            context.particle_scale_over_lifetime_pool.new({
-                1, 0
-            })
-        );
-        components.set(ParticleColorOverLifetime.typeid,
-            context.particle_color_over_lifetime_pool.new({
-                rl::BLUE, rl::RED
-            })
-        );
-
-        context.particle_pool.new({
-            {position,{(random::next_float(&rand)-0.5)*2.0 * 50,(random::next_float(&rand)-0.5)*2.0 * 50},0},
+        float[<2>] velocity = {
+           0,0
+        };
+        usz particle_idx = context.particle_pool.new({
+            {position,velocity,0},
             {random::next_float(&rand)*5 + 2},
             {255, 255, 255, 255},
-            0,2,random::next_float(&rand)*4 + 2,components
+            0,2,random::next_float(&rand)*4 + 2,{}
         });
+        e.particle_components_handler(context, e, &context.particle_pool.entity_pool[particle_idx]);
     }
 }

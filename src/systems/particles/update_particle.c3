@@ -12,7 +12,6 @@ fn void update_particle(ParticleContext* context,  double dt)
         p.rigidbody.position += (float[<2>])dt * p.rigidbody.velocity;
         p.lifetime += dt; 
         p.rigidbody.velocity.x *= 0.98;
-        p.rigidbody.velocity.y += 350*(float)dt;
 
         p.components.@each(;typeid type, usz id)
         {

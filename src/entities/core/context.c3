@@ -33,7 +33,7 @@ fn void Context.init(&self, ParticleContext* pc){
 	self.rigidbody_pool.init(5000);
 	self.shape_pool.init(5000);
 
-    self.sound_manager.load_sound_pool("pop", "resources/pop.ogg", 30);
+    self.sound_manager.load_sound_pool("pop", "resources/pop.ogg", 100);
     self.setup_initial_entites();
 	self.slow_time.init(pc);
 }
@@ -56,7 +56,7 @@ fn void Context.setup_initial_entites(&self) @private{
 	//Puck Setup
 	self.puck_pool.new({
 		self.rigidbody_pool.new({
-			float[<2>]{(float)(main::WINDOWS_WIDTH/2), (float)(main::WINDOWS_HEIGHT-150)},
+			float[<2>]{(float)(main::WINDOWS_WIDTH/2), (float)(main::WINDOWS_HEIGHT-250)},
 			{256,-1024},
 			0
 		}),
@@ -69,6 +69,13 @@ fn void Context.setup_initial_entites(&self) @private{
 		0, 0, 1, 0
 	};
 
+	self.level_manager.update_level();
+	self.level_manager.update_level();
+	self.level_manager.update_level();
+	self.level_manager.update_level();
+	self.level_manager.update_level();
+	self.level_manager.update_level();
+	self.level_manager.update_level();
 	self.level_manager.update_level();
 	systems::bricks::spawn_initial_bricks(&self.brick_rigidbody_pool, &self.brick_pool, &self.shape_pool, {32, 12}, {self.level_manager.level.rows, self.level_manager.level.columns}, &self.animate_shape_rect_pool);
 }

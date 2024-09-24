@@ -11,7 +11,11 @@ fn void update_slow_time(SlowTime* entity, Context* ctx, ParticleContext* partic
     if(entity.is_burnout){
         entity.burnout_current -= dt;
         entity.duration_current -= dt;
-        if(entity.burnout_current <= 0) entity.is_burnout = false;
+        particle_ctx.emiter_pool.entity_pool[entity.emitter_idx].active = false;
+        if(entity.burnout_current <= 0){
+          particle_ctx.emiter_pool.entity_pool[entity.emitter_idx].active = true;
+          entity.is_burnout = false;
+        } 
         return;
     }
     
@@ -19,6 +23,7 @@ fn void update_slow_time(SlowTime* entity, Context* ctx, ParticleContext* partic
         entity.duration_current -= 2*dt;
         entity.duration_current = math::max(entity.duration_current, 0.0);
         entity.value = 1;
+        particle_ctx.emiter_pool.entity_pool[entity.emitter_idx].active = false;
         return;
     }
 

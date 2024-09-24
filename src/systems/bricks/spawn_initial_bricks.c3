@@ -16,15 +16,17 @@ fn void spawn_initial_bricks(
 {
     float xSpacing = 0;
 	float ySpacing = 0;
-	float totalXSpaceing = ((array_dimension.x * (brick_dimensions.x + xSpacing)) - xSpacing) / 2;
-	float totalYSpaceing = ((array_dimension.y * (brick_dimensions.y + ySpacing)) - ySpacing) / 2;
+	float totalXSpaceing = ((array_dimension.y * (brick_dimensions.x + xSpacing)) - xSpacing) / 2;
+	float totalYSpaceing = ((array_dimension.x * (brick_dimensions.y + ySpacing)) - ySpacing) / 2;
+
+    io::printfn("rows: %d, columns: %d", array_dimension.x, array_dimension.y);
 
 	for(usz i = 0; i < array_dimension.x*array_dimension.y; i++){
 		usz line 	= i / array_dimension.x;
 		usz column 	= i % array_dimension.x;
 		usz index 	= array_dimension.x*line + column;
-		float posX 	= (main::WINDOWS_WIDTH / 2 - totalXSpaceing + (column * (brick_dimensions.x + xSpacing)));
-		float posY 	= (main::WINDOWS_HEIGHT / 4 - totalYSpaceing + (line * (brick_dimensions.y + ySpacing)));
+		float posX 	= (main::WINDOWS_WIDTH / 2 - totalXSpaceing + (line * (brick_dimensions.x + xSpacing)));
+		float posY 	= (main::WINDOWS_HEIGHT / 4 - totalYSpaceing + (column * (brick_dimensions.y + ySpacing)));
         
         usz total = array_dimension.x*array_dimension.y;
 

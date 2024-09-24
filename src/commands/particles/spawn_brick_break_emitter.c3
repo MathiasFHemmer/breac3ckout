@@ -15,6 +15,27 @@ fn void spawn_brick_break_emitter(ParticleContext* context, float[<2>] position,
         true,
         position,
         0,1,components,
+        &create_components,
         type, amount, position_type, position_data
     });
+}
+
+fn void create_components(ParticleContext* context, Emitter* e, Particle* p){
+    ParticleComponents* components = &p.components;
+
+    components.set(ParticleScaleOverLifetime.typeid,
+        context.particle_scale_over_lifetime_pool.new({
+            1, 0
+        })
+    );
+    components.set(ParticleColorOverLifetime.typeid,
+        context.particle_color_over_lifetime_pool.new({
+            rl::RED, rl::BLUE
+        })
+    );
+    components.set(ParticleGravity.typeid,
+        context.particle_gravity_pool.new({
+            500
+        })
+    );
 }

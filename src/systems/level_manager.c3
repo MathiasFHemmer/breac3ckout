@@ -11,6 +11,6 @@ struct LevelManager {
 fn void LevelManager.update_level(&self){
     self.level.dificulty_scale += 1;
     self.level.rows = (usz)(math::clamp(self.level.dificulty_scale, 0, 20));
-    self.level.columns = (usz)(math::clamp(self.level.dificulty_scale*2, 0, 40));
+    self.level.columns = (usz)(math::clamp(self.level.dificulty_scale*4, 0, 20));
     self.level.current_bricks = (int)(self.level.rows * self.level.columns);
 }
